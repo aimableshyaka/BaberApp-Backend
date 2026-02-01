@@ -146,19 +146,49 @@ async function forgotPassword(req: Request, res: Response) {
         user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
         await user.save();
 
-        // Create reset URL (frontend URL)
-        const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}&email=${email}`;
+        // Create reset URL - Use HTTP redirect link that will open Expo app
+        const resetUrl = `http://192.168.1.97:3000/api/users/reset-password/redirect?token=${resetToken}&email=${email}`;
 
-        // Email template
+        // Email template - Simple format that works with Gmail
         const html = `
-            <h2>Password Reset Request</h2>
-            <p>You requested a password reset. Click the link below to reset your password:</p>
-            <a href="${resetUrl}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                Reset Password
-            </a>
-            <p>Or copy this link: ${resetUrl}</p>
-            <p>This link will expire in 1 hour.</p>
-            <p>If you didn't request this, please ignore this email.</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <div style="background-color: #ffffff; max-width: 600px; margin: 20px auto; padding: 40px; border-radius: 8px;">
+        <h1 style="color: #333333; margin: 0 0 20px 0;">Password Reset Request</h1>
+        
+        <p style="color: #666666; margin: 0 0 20px 0; font-size: 16px;">
+            You requested to reset your password. Click the link below to proceed:
+        </p>
+        
+        <div style="margin: 30px 0;">
+            <a href="${resetUrl}" style="background-color: #007bff; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: bold; display: inline-block;">Reset Password</a>
+        </div>
+        
+        <p style="color: #666666; margin: 20px 0; font-size: 14px;">
+            If the button doesn't work, copy and paste this link in your browser:
+        </p>
+        
+        <p style="background-color: #f9f9f9; padding: 12px; border-left: 4px solid #007bff; word-wrap: break-word; margin: 0 0 20px 0;">
+            <a href="${resetUrl}" style="color: #007bff; text-decoration: none; word-break: break-all;">${resetUrl}</a>
+        </p>
+        
+        <p style="color: #999999; margin: 20px 0 0 0; font-size: 12px;">
+            This link will expire in 1 hour. If you didn't request this, please ignore this email.
+        </p>
+        
+        <hr style="border: none; border-top: 1px solid #eeeeee; margin: 30px 0;">
+        
+        <p style="color: #cccccc; margin: 0; font-size: 11px; text-align: center;">
+            This is an automated message, please do not reply to this email.
+        </p>
+    </div>
+</body>
+</html>
         `;
 
         // Send email
@@ -223,9 +253,29 @@ async function resetPassword(req: Request, res: Response) {
 
         // Send confirmation email
         const html = `
-            <h2>Password Reset Successful</h2>
-            <p>Your password has been successfully reset.</p>
-            <p>If you didn't make this change, please contact support immediately.</p>
+            <html>
+                <head>
+                    <meta charset="UTF-8">
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <h2 style="color: #28a745;">✓ Password Reset Successful</h2>
+                        <p>Your password has been successfully reset.</p>
+                        
+                        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                            <p style="margin: 0; color: #666;">
+                                You can now log in with your new password.
+                            </p>
+                        </div>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                        
+                        <p style="color: #999; font-size: 12px;">
+                            <strong>Security Note:</strong> If you didn't make this change, please contact support immediately at your earliest convenience.
+                        </p>
+                    </div>
+                </body>
+            </html>
         `;
         await sendEmail(user.email, "Password Reset Successful", html);
 
