@@ -69,21 +69,12 @@ export const getServicesBySalon = async (req: AuthRequest, res: Response) => {
   try {
     const salonId = req.params.salonId as string;
 
-    if (!req.user) {
-      return res.status(401).json({
-        error: "Unauthorized",
-      });
-    }
-
-    // Check if salon exists and belongs to the user
-    const salon = await Salon.findOne({
-      _id: new mongoose.Types.ObjectId(salonId),
-      owner: new mongoose.Types.ObjectId(req.user.userId),
-    });
+    // Public access - Check if salon exists
+    const salon = await Salon.findById(salonId);
 
     if (!salon) {
       return res.status(404).json({
-        error: "Salon not found or you don't have permission",
+        error: "Salon not found",
       });
     }
 
@@ -112,21 +103,12 @@ export const getServiceById = async (req: AuthRequest, res: Response) => {
     const salonId = req.params.salonId as string;
     const serviceId = req.params.serviceId as string;
 
-    if (!req.user) {
-      return res.status(401).json({
-        error: "Unauthorized",
-      });
-    }
-
-    // Check if salon exists and belongs to the user
-    const salon = await Salon.findOne({
-      _id: new mongoose.Types.ObjectId(salonId),
-      owner: new mongoose.Types.ObjectId(req.user.userId),
-    });
+    // Public access - Check if salon exists
+    const salon = await Salon.findById(salonId);
 
     if (!salon) {
       return res.status(404).json({
-        error: "Salon not found or you don't have permission",
+        error: "Salon not found",
       });
     }
 

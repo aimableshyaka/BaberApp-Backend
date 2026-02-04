@@ -198,20 +198,12 @@ export const getWorkingHours = async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
 
-    if (!req.user) {
-      return res.status(401).json({
-        error: "Unauthorized",
-      });
-    }
-
-    const salon = await Salon.findOne({ 
-      _id: new mongoose.Types.ObjectId(id), 
-      owner: new mongoose.Types.ObjectId(req.user.userId) 
-    });
+    // Public access - anyone can view working hours
+    const salon = await Salon.findById(id);
 
     if (!salon) {
       return res.status(404).json({
-        error: "Salon not found or you don't have permission",
+        error: "Salon not found",
       });
     }
 

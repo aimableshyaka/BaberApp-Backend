@@ -6,6 +6,7 @@ import {ProtectedRouter} from "./routes/protected";
 import SalonRoute from "./routes/salon";
 import AdminSalonRoute from "./routes/admin.salon";
 import ServiceRoute from "./routes/service";
+import BookingRoute from "./routes/booking";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api/salon",SalonRoute);
 app.use("/api/admin/salons", AdminSalonRoute);
 app.use("/api/service", ServiceRoute);
+app.use("/api/booking", BookingRoute);
 app.get("/",(req:Request ,res:Response)=>{
     return res.send("welcome to my App");
 })

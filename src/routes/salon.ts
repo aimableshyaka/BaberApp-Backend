@@ -22,7 +22,7 @@ SalonRoute.get("/", getSalon); // Public access
 
 // Working Hours Management (must be before /:id route)
 SalonRoute.put("/:id/working-hours", authenticate, setWorkingHours);
-SalonRoute.get("/:id/working-hours", authenticate, getWorkingHours);
+SalonRoute.get("/:id/working-hours", getWorkingHours); // Public access
 
 // Holiday Management (must be before /:id route)
 SalonRoute.post("/:id/holidays", authenticate, addHoliday);
